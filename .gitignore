@@ -2,4 +2,5 @@ public/parcel/
 node_modules/
 package-lock.json
 .cache/
+.parcel-cache
 .bak/
