@@ -15,7 +15,11 @@ app.use((req, res, next) => {
     let raw = index.toString(req.url, state);
     raw = htmldom(raw);
     if (state.route === "*") res.status(404);
-    res.send(raw.beautify());
+    res.send(
+      process.env.NODE_ENV !== "production"
+        ? raw.beautify()
+        : raw.uglify()
+    );
   } catch (e) {
     next(e);
   }

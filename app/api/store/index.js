@@ -2,10 +2,10 @@ const path = require("path");
 const fortune = require("fortune");
 const fsAdapter = require("fortune-fs");
 const models = require("./models");
-
 const noOninput = (contex, record, update) =>
   contex.request.method === "delete" ? null : update;
 const noOnOutput = (contex, update) => update;
+const mappedMethods = {};
 const [hooks, types] = models.reduce((reducer, currentValue) => {
   reducer[0] = {};
   reducer[1] = {};
@@ -13,6 +13,7 @@ const [hooks, types] = models.reduce((reducer, currentValue) => {
     typeof currentValue.name === "string" &&
     typeof currentValue.types === "object"
   ) {
+    mappedMethods[currentValue.name] = {};
     reducer[0][currentValue.name] = [
       typeof currentValue.onInput === "function"
         ? currentValue.onInput
@@ -30,6 +31,17 @@ const store = fortune(types, {
   hooks,
   adapter: [fsAdapter, { path: path.join(process.cwd(), "storage/store") }]
 });
-console.log(store);
+const mapped = Object.keys(mappedMethods).reduce((a, b) => {
+  a[b] = {
+    find: (...args) => store.find.apply(store, [b, ...args]),
+    create: (...args) => store.create.apply(store, [b, ...args]),
+    update: (...args) => store.update.apply(store, [b, ...args]),
+    remove: (...args) => store.remove.apply(store, [b, ...args])
+  };
+  return a;
+}, {});
+Object.assign(store, {
+  model: mapped
+});
 
 module.exports = store;

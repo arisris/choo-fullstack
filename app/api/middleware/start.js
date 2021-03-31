@@ -5,10 +5,10 @@ const bodyParser = require("body-parser")
 const dump = a => `<pre>${a.map(i => util.inspect(i) + os.EOL)}</pre>`;
 
 const stepOne = (req, res, next) => {
-  res.dump = (...args) => res.send(dump(args));
+  res.dump = next;
   if (process.env.NODE_ENV !== "production") {
     res.app.set("json spaces", 2);
-    res.dump = next;
+    res.dump = (...args) => res.send(dump(args));
   }
   next();
 };
