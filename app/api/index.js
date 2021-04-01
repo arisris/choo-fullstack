@@ -12,7 +12,7 @@ router.post("/auth/reset-password", auth.resetPassword);
 router.post("/auth/reset-password-verify", auth.resetPasswordVerify);
 
 router.get("/", async function (req, res) {
-  res.json({ msg: "hello apissss" });
+  res.json({ msg: "hello ssss ssssss" });
 });
 router.get("/dump", function (req, res) {
   res.dump(store);

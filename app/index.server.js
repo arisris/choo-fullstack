@@ -5,10 +5,11 @@ const htmldom = require("htmldom");
 const index = require("./");
 const app = express();
 
+app.use(express.static(path.join(__dirname, "/../public")));
 app.use("/api", require("./api"));
 app.use((req, res, next) => {
   const serverState = {
-    hello: "World"
+    hello: "wwwwssssssqqqqqqqq"
   };
   const state = { serverState };
   try {

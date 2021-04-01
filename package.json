@@ -21,8 +21,7 @@
   "scripts": {
     "dev": "rimraf public/parcel && parcel serve app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache --port 3000",
     "build": "rimraf public/parcel && parcel build app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache",
-    "postbuild": "purgecss --config ./purgecss.config.js",
-    "parcel": "parcel"
+    "postbuild": "purgecss --config ./purgecss.config.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -40,7 +39,6 @@
     "tachyons": "^4.12.0"
   },
   "devDependencies": {
-    "chokidar": "^3.5.1",
     "parcel": "^2.0.0-beta.2"
   }
 }
