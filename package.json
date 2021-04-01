@@ -19,11 +19,14 @@
   },
   "homepage": "https://github.com/arisris/choo-fullstack#readme",
   "scripts": {
-    "dev": "rimraf public/parcel && parcel serve ./app/index.js --no-source-maps --dist-dir ./public/parcel --public-url /parcel",
-    "build": "rimraf public/parcel && parcel build ./app/index.js --no-source-maps --dist-dir ./public/parcel --public-url /parcel"
+    "dev": "rimraf public/parcel && parcel serve app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache --port 3000",
+    "build": "rimraf public/parcel && parcel build app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache",
+    "postbuild": "purgecss --config ./purgecss.config.js",
+    "parcel": "parcel"
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "choo": "^7.1.0",
     "domq.js": "^0.6.2",

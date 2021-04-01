@@ -1,6 +1,11 @@
 const createError = require("http-errors");
 
-const error404 = (req, res, next) => next(createError.NotFound(`Canot ${req.method} ${req.originalUrl} Page Not Found`));
+const error404 = (req, res, next) =>
+  next(
+    createError.NotFound(
+      `Uppss Can't ${req.method} ${req.originalUrl} Endpoint Not Found`
+    )
+  );
 const error50x = (err, req, res, next) => {
   if (err instanceof createError.HttpError) {
     if (err.expose) {
