@@ -1,22 +1,17 @@
 const path = require("path");
-const chokidar = require("chokidar");
-const express = require("express");
-const app = express();
+const watcher = require("@parcel/watcher");
 
-const watcher = chokidar.watch(["./app"]);
-watcher.on("ready", () => {
-  watcher.on("all", () => {
-    Object.keys(require.cache).forEach(id => {
-      if (id.startsWith(path.join(__dirname, "app"))) {
-        delete require.cache[id];
-      }
-    });
+// Invalidate require cache on request
+watcher.subscribe("./app", (err, event) => {
+  Object.keys(require.cache).forEach(id => {
+    if (id.startsWith(path.join(__dirname, "app"))) {
+      delete require.cache[id];
+    }
   });
 });
-module.exports = devserver => {
-  app.use(express.static(path.join(__dirname, "public")));
-  app.use((req, res, next) => {
-    require("./app/index.server.js")(req, res, next);
+module.exports = app => {
+  app.use((req, res) => {
+    // Lazy express like modules loaded here
+    require("./app/index.server.js")(req, res);
   });
-  devserver.use(app);
 };
