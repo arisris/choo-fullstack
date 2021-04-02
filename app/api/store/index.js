@@ -4,4 +4,6 @@ const DEFINED_MODEL = [
   require("./users")
 ];
 
-module.exports = createStore(DEFINED_MODEL);
+const store = createStore(DEFINED_MODEL);
+
+module.exports = store;

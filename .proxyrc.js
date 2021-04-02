@@ -1,17 +1,39 @@
 const path = require("path");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const watcher = require("@parcel/watcher");
+const child_process = require("child_process");
 
-// Invalidate require cache on request
+let program = newProgram();
 watcher.subscribe("./app", (err, event) => {
-  Object.keys(require.cache).forEach(id => {
-    if (id.startsWith(path.join(__dirname, "app"))) {
-      delete require.cache[id];
-    }
-  });
+  console.log(`Changes Detected. Kill The Server`);
+  program.kill();
 });
-module.exports = app => {
-  app.use((req, res) => {
-    // Lazy express like modules loaded here
-    require("./app/index.server.js")(req, res);
+
+// Handle Parcel Exit
+process.on("exit", () => {
+  console.log("Exited Byeee");
+  program.kill();
+});
+
+function newProgram() {
+  const cp = child_process.spawn("node", ["server", "--port", 9000]);
+  cp.stdout.on("data", data => {
+    console.log(`Log: ${data}`);
   });
+  cp.stderr.on("data", data => {
+    console.error(`Err: ${data}`);
+  });
+  cp.on("close", code => {
+    program = newProgram();
+  });
+  return cp;
+}
+
+module.exports = app => {
+  app.use(
+    createProxyMiddleware({
+      target: "http://localhost:9000",
+      changeOrigin: true
+    })
+  );
 };

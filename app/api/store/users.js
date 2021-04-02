@@ -1,4 +1,5 @@
 exports.name = "users";
+exports.timestamp = true;
 
 exports.types = {
   name: String,

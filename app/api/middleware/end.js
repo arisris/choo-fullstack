@@ -7,15 +7,12 @@ const error404 = (req, res, next) =>
     )
   );
 const error50x = (err, req, res, next) => {
-  if (err instanceof createError.HttpError) {
-    if (err.expose) {
-      return res.status(err.statusCode).json({
-        type: "error" + err.statusCode,
-        message: err.message
-      });
-    } else {
-      return next(err);
-    }
+  if (err instanceof Error) {
+    res.status(err.statusCode || 500).json({
+      type: err.statusCode || 500,
+      message: err.message
+    }).end();
+    return;
   }
   return next();
 };
