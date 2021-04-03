@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+const { program } = require("commander");
+const chalk = require("chalk");
+const handleError = err => console.error(err);
+const OK = chalk.green("OK");
+const sleep = function (sec) {
+  return new Promise(resolve => {
+    setTimeout(resolve, sec);
+  });
+};
+
+program
+  .command("serve")
+  .usage("serve --port <port> --host <host>")
+  .option("-P, --port <port>", "Provide Host", 3000)
+  .option("-H, --host <host>", "Provide Host", "localhost")
+  .action(function ({ port, host }) {
+    require("./app/index.server.js").listen(parseInt(port), host, () => {
+      console.log(`App is now run at port http://${host}:${port}`, OK);
+    });
+  });
+
+program.command("seed").action(async function () {
+  const faker = require("faker");
+  const fsj = require("fs-jetpack");
+  const store = require("./app/api/store");
+  const _sample = require("./app/api/store/_sample");
+  const generateJsonFileOfSampleData = async function () {
+    const data = {};
+    for (let table in store.recordTypes) {
+      const {
+        payload: { records, count }
+      } = await store.find(table);
+      data[table] = records;
+    }
+    await fsj.writeAsync("./storage/data.json", data);
+  };
+  const dropAllTable = async function () {
+    const drop = async table => {
+      const data = await store.find(table);
+      if (data.payload.count > 0) {
+        for (let item of data.payload.records) {
+          await store.delete(table, [item.id]);
+        }
+        console.log(`Drop ${data.payload.count} record in "${table}"`, OK);
+      } else {
+        console.log(`No record found in ${table}`, OK);
+      }
+    };
+
+    for (let table in store.recordTypes) {
+      await drop(table);
+      await sleep(50);
+    }
+  };
+  const seedData = async function () {
+    for (let table in _sample) {
+      if (Array.isArray(_sample[table])) {
+        let d = [];
+        for (let item of _sample[table]) {
+          d.push(await store.create(table, item));
+          await sleep(50);
+        }
+        console.log(`Created ${d.length} record for table ${table}`, OK);
+      } else if (typeof _sample[table] === "object") {
+        await store.create(table, item);
+        console.log(`Created 1 record for table ${table}`, OK);
+      }
+    }
+  };
+  try {
+    await dropAllTable();
+    await seedData();
+    await generateJsonFileOfSampleData();
+  } catch (e) {
+    handleError(e);
+  }
+});
+
+program.parse(process.argv);

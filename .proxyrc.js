@@ -3,8 +3,8 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const watcher = require("@parcel/watcher");
 const child_process = require("child_process");
 
+const port = 3479;
 let server = spawnServer();
-let port = 3479;
 watcher.subscribe("./app", (err, event) => {
   console.log(`Changes Detected. Kill The Server`);
   server.kill();
@@ -17,7 +17,7 @@ process.on("exit", () => {
 });
 
 function spawnServer() {
-  const cp = child_process.spawn("node", ["server", "--port", port]);
+  const cp = child_process.spawn("node", ["./cli", "serve", "--port", port]);
   cp.stdout.on("data", data => {
     console.log(`Log: ${data}`);
   });

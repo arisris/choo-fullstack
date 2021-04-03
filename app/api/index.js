@@ -13,7 +13,7 @@ router.post("/auth/reset-password", auth.resetPassword);
 router.post("/auth/reset-password-verify", auth.resetPasswordVerify);
 
 router.get("/", async function (req, res) {
-  res.json({ msg: "hello" });
+  res.json({ msg: "hello worldssssseeee" });
 });
 router.get("/dump", async function (req, res, next) {
   //process.exit();

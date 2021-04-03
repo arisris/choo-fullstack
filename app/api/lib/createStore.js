@@ -7,7 +7,7 @@ module.exports = models => {
     contex.request.method === "delete" ? null : update;
   const noOnOutput = (contex, update) => update;
   const mappedMethods = {};
-  const [hooks, types] = models.reduce((reducer, currentValue) => {
+  /*const [hooks, types] = models.reduce((reducer, currentValue, currentIndex) => {
     reducer[0] = {};
     reducer[1] = {};
     if (
@@ -26,8 +26,28 @@ module.exports = models => {
       reducer[1][currentValue.name] = currentValue.types;
     }
     return reducer;
-  }, []);
-
+  }, []);*/
+  const { hooks, types } = models.reduce(
+    (reducer, currentValue, currentIndex) => {
+      if (
+        typeof currentValue.name === "string" &&
+        typeof currentValue.types === "object"
+      ) {
+        mappedMethods[currentValue.name] = {};
+        reducer.hooks[currentValue.name] = [
+          typeof currentValue.onInput === "function"
+            ? currentValue.onInput
+            : noOninput,
+          typeof currentValue.onOutput === "function"
+            ? currentValue.onOutput
+            : noOnOutput
+        ];
+        reducer.types[currentValue.name] = currentValue.types;
+      }
+      return reducer;
+    },
+    { hooks: {}, types: {} }
+  );
   const store = fortune(types, {
     hooks,
     adapter: [fsAdapter, { path: path.join(process.cwd(), "storage/store") }]
