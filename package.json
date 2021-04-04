@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/arisris/choo-fullstack#readme",
   "scripts": {
+    "start": "node ./cli serve",
     "dev": "rimraf public/parcel && parcel serve app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache --port 3000",
     "build": "rimraf public/parcel && parcel build app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache",
     "postbuild": "purgecss --config ./purgecss.config.js"
@@ -30,7 +31,9 @@
     "choo": "^7.1.0",
     "commander": "^7.2.0",
     "domq.js": "^0.6.2",
+    "emittery": "^0.8.1",
     "express": "^4.17.1",
+    "express-validator": "^6.10.0",
     "fortune": "^5.5.17",
     "fortune-fs": "^1.1.0",
     "fs-jetpack": "^3.1.0",

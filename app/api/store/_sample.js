@@ -1,6 +1,5 @@
 const faker = require("faker");
 const utils = require("../lib/utils");
-const bcrypt = require("bcrypt");
 
 exports.users = Array(10)
   .fill()
@@ -8,7 +7,7 @@ exports.users = Array(10)
     name: faker.name.findName(),
     email: faker.internet.email(),
     email_verified_at: new Date(),
-    password: bcrypt.hashSync("password", 10),
+    password: "password",
     password_reset_token: faker.random.alphaNumeric(10),
     created_at: new Date(),
     updated_at: new Date()

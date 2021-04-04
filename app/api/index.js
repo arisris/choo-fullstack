@@ -16,7 +16,6 @@ router.get("/", async function (req, res) {
   res.json({ msg: "hello worldssssseeee" });
 });
 router.get("/dump", async function (req, res, next) {
-  //process.exit();
   res.dump("zzzzxxxxxxxxxx");
 });
 

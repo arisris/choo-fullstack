@@ -1,9 +1,9 @@
-exports.name = "posts";
-
-exports.types = {
-  author: ["users", "posts"],
-  title: String,
-  content: String,
-  created_at: Date,
-  updated_at: Date
-}
+module.exports = function () {
+  this.name = "posts";
+  this.timestamp = true;
+  this.fields = {
+    author: ["users", "posts"],
+    title: String,
+    content: String
+  };
+};

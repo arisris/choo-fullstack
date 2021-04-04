@@ -12,17 +12,22 @@ watcher.subscribe("./app", (err, event) => {
 
 // Handle Parcel Exit
 process.on("exit", () => {
-  console.log("Exited Byeee");
+  process.stdout.write("Exited Dev Server Byeee...\n");
   server.kill();
 });
-
+let prevlength = 0;
 function spawnServer() {
   const cp = child_process.spawn("node", ["./cli", "serve", "--port", port]);
   cp.stdout.on("data", data => {
-    console.log(`Log: ${data}`);
+    process.stdout.write(`Log: ${data}`);
   });
+
   cp.stderr.on("data", data => {
-    console.error(`Err: ${data}`);
+    // fix for infinity loop same error buffer
+    if (data.length !== prevlength) {
+      process.stderr.write(`Err: ${data}`);
+      prevlength = data.length;
+    }
   });
   cp.on("close", code => {
     server = spawnServer();
