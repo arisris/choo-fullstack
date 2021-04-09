@@ -2,7 +2,6 @@ const path = require("path");
 const fortune = require("fortune");
 const fsAdapter = require("fortune-fs");
 const Emittery = require("emittery");
-const isFunction = v => typeof v === "function";
 
 const onInput = model => (context, record, update) => {
   Object.assign(model, { context });
@@ -27,8 +26,7 @@ const onOutput = model => (context, record) => {
   return model.emitSerial("output", record);
 };
 
-module.exports = models => {
-  const initializer = [];
+const modelFactory = models => {
   const { hooks, fields } = models
     .filter(model => model && typeof model === "function")
     .map(model => {
@@ -51,20 +49,21 @@ module.exports = models => {
             model.timestamp = false;
           }
           reducer.fields[model.name] = model.fields;
-          initializer.push(model);
         }
         return reducer;
       },
       { hooks: {}, fields: {} }
     );
-  const store = fortune(fields, {
+  return fortune(fields, {
     hooks,
     adapter: [fsAdapter, { path: path.join(process.cwd(), "storage/store") }]
   });
-  initializer.map(model => {
-    Object.assign(model, { store });
-    model.emit("init", store);
-    return model;
-  });
-  return store;
+};
+const store = { cached: false, instance: {} };
+module.exports = function (models) {
+  if (!store.cached) {
+    store.instance = modelFactory(models);
+    store.cached = true;
+  }
+  return store.instance;
 };

@@ -17,14 +17,14 @@ process.on("exit", () => {
 });
 let prevlength = 0;
 function spawnServer() {
-  const cp = child_process.spawn("node", ["./cli", "serve", "--port", port]);
+  const cp = child_process.spawn("node", ["cli", "serve", "--port", port]);
   cp.stdout.on("data", data => {
     process.stdout.write(`Log: ${data}`);
   });
 
   cp.stderr.on("data", data => {
     // fix for infinity loop same error buffer
-    if (data.length !== prevlength) {
+    if (data.length !== prevlength) { // compared with previous buff length
       process.stderr.write(`Err: ${data}`);
       prevlength = data.length;
     }

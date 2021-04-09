@@ -11,7 +11,7 @@ const sleep = function (sec) {
 
 program
   .command("serve")
-  .usage("serve --port <port> --host <host>")
+  .usage("[options]")
   .option("-P, --port <port>", "Provide Host", 3000)
   .option("-H, --host <host>", "Provide Host", "localhost")
   .action(function ({ port, host }) {
@@ -20,61 +20,65 @@ program
     });
   });
 
-program.command("seed").action(async function () {
-  const faker = require("faker");
-  const fsj = require("fs-jetpack");
-  const store = require("./app/api/store");
-  const _sample = require("./app/api/store/_sample");
-  const generateJsonFileOfSampleData = async function () {
-    const data = {};
-    for (let table in store.recordTypes) {
-      const {
-        payload: { records, count }
-      } = await store.find(table);
-      data[table] = records;
-    }
-    await fsj.writeAsync("./storage/data.json", data);
-  };
-  const dropAllTable = async function () {
-    const drop = async table => {
-      const data = await store.find(table);
-      if (data.payload.count > 0) {
-        for (let item of data.payload.records) {
-          await store.delete(table, [item.id]);
-        }
-        console.log(`Drop ${data.payload.count} record in "${table}"`, OK);
-      } else {
-        console.log(`No record found in ${table}`, OK);
+program
+  .command("seed")
+  .usage("[options]")
+  .option("--dump", "Dumping Data", false)
+  .option("--drop", "With Drop All Data", false)
+  .action(async function ({ drop, dump }) {
+    const faker = require("faker");
+    const fsj = require("fs-jetpack");
+    const store = require("./app/api/store");
+    const _sample = require("./app/api/store/_sample");
+    const dumpDataTo = async function () {
+      await fsj.removeAsync("./storage/dump/*");
+      for (let table in store.recordTypes) {
+        const {
+          payload: { records, count }
+        } = await store.find(table);
+        await fsj.writeAsync(`./storage/dump/${table}.json`, records);
       }
     };
-
-    for (let table in store.recordTypes) {
-      await drop(table);
-      await sleep(50);
-    }
-  };
-  const seedData = async function () {
-    for (let table in _sample) {
-      if (Array.isArray(_sample[table])) {
-        let d = [];
-        for (let item of _sample[table]) {
-          d.push(await store.create(table, item));
-          await sleep(50);
+    const dropAllTable = async function () {
+      const drop = async table => {
+        const data = await store.find(table);
+        if (data.payload.count > 0) {
+          for (let item of data.payload.records) {
+            await store.delete(table, [item.id]);
+          }
+          console.log(`Drop ${data.payload.count} record in "${table}"`, OK);
+        } else {
+          console.log(`No record found in ${table}`, OK);
         }
-        console.log(`Created ${d.length} record for table ${table}`, OK);
-      } else if (typeof _sample[table] === "object") {
-        await store.create(table, item);
-        console.log(`Created 1 record for table ${table}`, OK);
+      };
+
+      for (let table in store.recordTypes) {
+        await drop(table);
+        await sleep(50);
       }
+    };
+    const seedData = async function () {
+      for (let table in _sample) {
+        if (Array.isArray(_sample[table])) {
+          let d = [];
+          for (let item of _sample[table]) {
+            d.push(await store.create(table, item));
+            await sleep(50);
+          }
+          console.log(`Created ${d.length} record for table ${table}`, OK);
+        } else if (typeof _sample[table] === "object") {
+          await store.create(table, item);
+          console.log(`Created 1 record for table ${table}`, OK);
+        }
+      }
+    };
+    try {
+      if (drop) await dropAllTable();
+      await seedData();
+      if (dump) await dumpDataTo();
+    } catch (e) {
+      handleError(e);
     }
-  };
-  try {
-    await dropAllTable();
-    await seedData();
-    await generateJsonFileOfSampleData();
-  } catch (e) {
-    handleError(e);
-  }
-});
+  });
 
 program.parse(process.argv);

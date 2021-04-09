@@ -4,7 +4,7 @@ const ev = require("express-validator");
 const error404 = (req, res, next) =>
   next(
     createError.NotFound(
-      `Uppss Can't ${req.method} ${req.originalUrl} Endpoint Not Found`
+      `Uppss Can't Perform Request ${req.method} ${req.originalUrl} Not Found`
     )
   );
 const error50x = (err, req, res, next) => {

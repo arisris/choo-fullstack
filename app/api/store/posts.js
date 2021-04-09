@@ -6,4 +6,8 @@ module.exports = function () {
     title: String,
     content: String
   };
+  const self = this;
+  this.on("output", async function(record) {
+    //console.log(await self.context.transaction.find("users"));
+  })
 };

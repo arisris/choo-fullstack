@@ -1,24 +1,15 @@
 const express = require("express");
 const createError = require("http-errors");
 const router = express.Router();
-const auth = require("./controllers/auth");
 const store = require("./store");
+const { asyncHandler } = require("./lib/utils");
 const { passwordHash, passwordVerify } = require("./lib/utils");
 
 router.use(require("./middleware/start"));
-
-router.post("/auth/login", auth.login);
-router.post("/auth/register", auth.register);
-router.post("/auth/reset-password", auth.resetPassword);
-router.post("/auth/reset-password-verify", auth.resetPasswordVerify);
-
+router.use("/accounts", require("./routes/accounts"));
 router.get("/", async function (req, res) {
   res.json({ msg: "hello worldssssseeee" });
 });
-router.get("/dump", async function (req, res, next) {
-  res.dump("zzzzxxxxxxxxxx");
-});
-
 router.use(require("./middleware/end"));
 
 module.exports = router;
