@@ -4,7 +4,15 @@ const { body } = require("express-validator");
 const { throwIfNotValid } = require("../lib/validation");
 const { asyncHandler, passwordVerify, jwtEncode } = require("../lib/utils");
 const store = require("../store");
+const jwtAuth = require("../middleware/jwt-auth");
 
+router.get(
+  "/me",
+  jwtAuth,
+  asyncHandler((req, res) => {
+    res.json({ msg: "You Are Authenticated", user: req.user });
+  })
+);
 router.post(
   "/login",
   asyncHandler(async function (req, res) {

@@ -1,6 +1,15 @@
+# Dirs
+.cache/
+.parcel-cache/
+.bak/
+api/
 public/parcel/
 node_modules/
+# Files
 package-lock.json
-.cache/
-.parcel-cache
-.bak/
+
+# allowed
+!.parcelrc
+!.proxyrc.js
+!.babelrc
+!.gitignore
