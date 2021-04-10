@@ -17,12 +17,45 @@
   "bugs": {
     "url": "https://github.com/arisris/choo-fullstack/issues"
   },
+  "server": "api/index.js",
+  "browser": "public/parcel/index.js",
+  "targets": {
+    "browser": {
+      "context": "browser",
+      "engines": {
+        "browsers": "> 0.25%"
+      },
+      "isLibrary": false,
+      "outputFormat": "global",
+      "includeNodeModules": true,
+      "distDir": "public/parcel",
+      "publicUrl": "/parcel",
+      "sourceMap": false
+    },
+    "server": {
+      "context": "node",
+      "engines": {
+        "node": ">=12.x"
+      },
+      "isLibrary": true,
+      "scopeHoist": false,
+      "optimize": true,
+      "distDir": "api",
+      "sourceMap": false
+    }
+  },
   "homepage": "https://github.com/arisris/choo-fullstack#readme",
   "scripts": {
-    "start": "node ./cli serve",
-    "dev": "rimraf public/parcel && parcel serve app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache --port 3000",
-    "build": "rimraf public/parcel && parcel build app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache",
-    "postbuild": "purgecss --config ./purgecss.config.js"
+    "start": "NODE_ENV=production node ./cli serve --prod",
+    "predev": "rimraf public/parcel && rimraf ./api",
+    "dev": "parcel serve app/index.js --no-source-maps --dist-dir public/parcel --public-url /parcel --cache-dir node_modules/.parcel-cache --port 3000",
+    "build": "npm run build-server && npm run build-client",
+    "prebuild-client": "rimraf public/parcel",
+    "build-client": "NANOHTML=1 parcel build app/index.js --target browser --cache-dir node_modules/.parcel-cache",
+    "postbuild-client": "purgecss --config ./purgecss.config.js",
+    "prebuild-server": "rimraf ./api",
+    "build-server": "parcel build app/index.server.js --target server --cache-dir node_modules/.parcel-cache",
+    "postbuild-server": "rimraf api/index.css && echo \"\/* Just shim for css *\/\" > api/index.css"
   },
   "dependencies": {
     "axios": "^0.19.2",

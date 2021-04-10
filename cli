@@ -12,10 +12,12 @@ const sleep = function (sec) {
 program
   .command("serve")
   .usage("[options]")
+  .option("--prod", "Try to production build", false)
   .option("-P, --port <port>", "Provide Host", 3000)
   .option("-H, --host <host>", "Provide Host", "localhost")
-  .action(function ({ port, host }) {
-    require("./app/index.server.js").listen(parseInt(port), host, () => {
+  .action(function ({ port, host, prod }) {
+    const app = prod ? require("./api/index.js") : require("./app/index.server.js");
+    app.listen(parseInt(port), host, () => {
       console.log(`App is now run at port http://${host}:${port}`, OK);
     });
   });

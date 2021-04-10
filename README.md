@@ -1,5 +1,5 @@
 ## choo-fullstack
-Using choo as a fullstack nodejs application with SSR support
+Using choojs as a fullstack nodejs application with SSR support
 
 Work in progress.
 
@@ -7,7 +7,7 @@ Work in progress.
 1. Choo and tachyons as frontend
 2. Express as backend
 3. Fortune as database store
-4. Parcel2 for build frontend code
+4. Parcel v2 for build frontend code
 6. And other awesome packages (package.json#dependencies)...
 
 Keep code small is my idea
@@ -19,11 +19,16 @@ git clone https://github.com/arisris/choo-fullstack.git
 
 cd choo-fullstack && npm install
 
-# Run development server
+# Seeding some data.
+node cli seed --dump --drop
+
+# Run development server & hot reloading code between server & browser no need to restart
 npm run dev
 
 # Run production
-npm run build && NODE_ENV=production node server
+npm run build && NODE_ENV=production node cli serve
+# Run production build with bundle server
+npm run build && npm run build-server && NODE_ENV=production node cli serve --prod true
 
 ```
 
@@ -31,5 +36,7 @@ npm run build && NODE_ENV=production node server
 
 1. Implement SSR (ok)
 2. Auth (wip)
+3. Build to vercel (wip)
+4. cli helper (wip)
 
 Thanks.

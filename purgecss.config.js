@@ -2,7 +2,7 @@
 module.exports = {
   content: ["public/parcel/**/*.js"],
   css: ["public/parcel/**/*.css"],
-  output: "public/parcel"
+  output: "public/parcel/"
   /*
   defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
   extractors: [
