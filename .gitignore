@@ -2,7 +2,7 @@
 .cache/
 .parcel-cache/
 .bak/
-api/
+/api/
 public/parcel/
 node_modules/
 # Files
