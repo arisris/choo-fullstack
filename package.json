@@ -55,7 +55,7 @@
     "postbuild-client": "purgecss --config ./purgecss.config.js",
     "prebuild-server": "rimraf ./api",
     "build-server": "parcel build app/index.server.js --target server --cache-dir node_modules/.parcel-cache",
-    "postbuild-server": "rimraf api/index.css && echo \"\/* Just shim for css *\/\" > api/index.css"
+    "postbuild-server": "rimraf api/index.css && echo \"/* Just shim for css */\" > api/index.css"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -70,6 +70,7 @@
     "fortune": "^5.5.17",
     "fortune-fs": "^1.1.0",
     "fs-jetpack": "^3.1.0",
+    "good-storage": "^1.1.1",
     "gray-matter": "^4.0.2",
     "htmldom": "^4.0.11",
     "jwt-simple": "^0.5.6",

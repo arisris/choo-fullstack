@@ -20,10 +20,13 @@ exports.randomString = c => {
 };
 exports.jwtEncode = payload => {
   const now = Date.now();
-  const obj = {
+  const data = {
     iat: now,
-    exp: now + twoday // after 2 days
+    exp: now + twoday, // after 2 days
+    ...payload
   };
-  return jwtSimple.encode(Object.assign(obj, payload), JWT_SECRET);
+  const access_token = jwtSimple.encode(data, JWT_SECRET);
+  return {...data, access_token}
+
 };
 exports.jwtDecode = encoded => jwtSimple.decode(encoded, JWT_SECRET);

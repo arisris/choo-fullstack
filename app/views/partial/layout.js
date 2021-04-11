@@ -9,7 +9,7 @@ module.exports = view => body((state, emit) => {
     <div class="absolute flex flex-column w-100 h-100">
       ${header(state, emit)}
       <div class="flex-auto">
-        <div class="mw8-l" style="margin:auto">
+        <div class="mw8-l pa2" style="margin:auto">
           ${view(state, emit)}
         </div>
       </div>

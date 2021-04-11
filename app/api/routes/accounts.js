@@ -4,7 +4,7 @@ const { body } = require("express-validator");
 const { throwIfNotValid } = require("../lib/validation");
 const { asyncHandler, passwordVerify, jwtEncode } = require("../lib/utils");
 const store = require("../store");
-const jwtAuth = require("../middleware/jwt-auth");
+const jwtAuth = require("../middleware/auth-jwt");
 
 router.get(
   "/me",
@@ -32,16 +32,15 @@ router.post(
       },
       limit: 1
     });
-    const fail = createError.Forbidden("Login Failed!!");
+    const fail = createError.Forbidden("Invalid email or password!!");
     if (!user) throw fail;
     if (!(await passwordVerify(req.body.password, user.password))) throw fail;
-    const data = {
+    const value = jwtEncode({
       id: user.id,
       name: user.name,
       email: user.email
-    };
-    const access_token = jwtEncode(data);
-    res.json({ success: true, access_token });
+    });
+    res.json({ success: true, value });
   })
 );
 router.post(
@@ -49,7 +48,6 @@ router.post(
   asyncHandler(async function (req, res) {
     await throwIfNotValid(req, [
       body(["name", "email", "password"], "Canot be Empty").notEmpty(),
-      body("name", "Name Must Alphanumeric Character").isAlphanumeric(),
       body("email", "Is Not Valid Email").isEmail(),
       body("password", "Min Length 6 Character").isLength({ min: 6 })
     ]);
@@ -71,7 +69,13 @@ router.post(
       payload: { records }
     } = await store.create("users", data);
     if (records.length === 0) throw createError.InternalServerError();
-    res.json({ success: true });
+    const [user] = records;
+    const value = jwtEncode({
+      id: user.id,
+      name: user.name,
+      email: user.email
+    });
+    res.json({ success: true, value });
   })
 );
 

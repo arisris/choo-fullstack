@@ -6,7 +6,7 @@ const child_process = require("child_process");
 const port = 3479;
 let server = spawnServer();
 watcher.subscribe("./app", (err, event) => {
-  console.log(`Changes Detected. Kill The Server`);
+  //console.log(`Changes Detected. Kill The Server`);
   server.kill();
 });
 
@@ -24,7 +24,8 @@ function spawnServer() {
 
   cp.stderr.on("data", data => {
     // fix for infinity loop same error buffer
-    if (data.length !== prevlength) { // compared with previous buff length
+    if (data.length !== prevlength) {
+      // compared with previous buff length
       process.stderr.write(`Err: ${data}`);
       prevlength = data.length;
     }

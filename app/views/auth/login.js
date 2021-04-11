@@ -1,6 +1,7 @@
 const html = require("choo/html");
 const layout = require("../partial/auth-layout");
-const { isEmail, isLength } = require("validator");
+const isEmail = require("validator/lib/isEmail");
+const isLength = require("validator/lib/isLength");
 
 const values = {
   email: "",
@@ -14,11 +15,16 @@ const allDone = {
 module.exports = layout((state, emit) => {
   emit(state.events.DOMTITLECHANGE, "Login");
   state.auth.forms.login = values;
+  const action = "/api/accounts/login";
   return html`
-    <div class="flex justify-center items-center ma0 pa4 purple ba b--black-10">
-      <form method="POST" action="/api/accounts/login">
+    <div
+      class="flex flex-column justify-center items-center ma0 pa4 purple ba b--black-10"
+    >
+      <form method="POST" action=${action}>
         <div class="mv2">
-          <label class="db">Email: <span title="Required valid email address">*</span></label>
+          <label class="db"
+            >Email: <span title="Required valid email address">*</span></label
+          >
           <input
             type="email"
             name="email"
@@ -34,12 +40,15 @@ module.exports = layout((state, emit) => {
           />
         </div>
         <div class="mv2">
-          <label class="db">Password: <span title="Required min-len 6 character">*</span></label>
+          <label class="db"
+            >Password:
+            <span title="Required min-len 6 character">*</span></label
+          >
           <input
             type="password"
             name="password"
             class="pa1 ${isValidClass(values.password, v => {
-              let i = isLength(v, {min: 6});
+              let i = isLength(v, { min: 6 });
               allDone.password = i;
               return i;
             })} outline-0"
@@ -59,7 +68,13 @@ module.exports = layout((state, emit) => {
             />
             <span class="f6 ml1">Remember Me</span>
           </label>
-          <button type="submit" onclick=${submit} ${allDone.email && allDone.password ? "" : "disabled"}>Submit</button>
+          <button
+            type="submit"
+            onclick=${submit}
+            ${allDone.email && allDone.password ? "" : "disabled"}
+          >
+            Submit
+          </button>
         </div>
         <div class="mt2">
           <a href="/forgot-password">Forgot Password</a>
@@ -84,6 +99,6 @@ module.exports = layout((state, emit) => {
   }
   function submit(e) {
     e.preventDefault();
-    emit("auth:login");
+    emit("auth:login", action);
   }
 });
